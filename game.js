@@ -246,15 +246,15 @@ async function initGame() {
     // Set up the tile types randomly
     for (let i = 0; i < ROWS; i++) {
       for (let j = 0; j < COLS; j++) {
-        if (Math.random() < 0.1) {
+        if (Math.random() < 0.018) {
           tiles[i][j] = TILE_WATER;
-        } else if (Math.random() < 0.2) {
-          tiles[i][j] = TILE_DIRT;
-        } else if (Math.random() < 0.3) {
+        } else if (Math.random() < 0.018) {
           tiles[i][j] = TILE_SAND;
-        } else if (Math.random() < 0.4) {
+        } else if (Math.random() < 0.075) {
+          tiles[i][j] = TILE_DIRT;
+        } else if (Math.random() < 0.018) {
           tiles[i][j] = TILE_BOULDER;
-        } else if (Math.random() < 0.5) {
+        } else if (Math.random() < 0.018) {
           tiles[i][j] = TILE_ROCK;
         }
       }
