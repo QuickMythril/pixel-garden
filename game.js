@@ -1,4 +1,5 @@
 let canvas = document.getElementById("gameCanvas");
+let addressDiv = document.getElementById("address");
 let inventoryDiv = document.getElementById("inventory");
 let ctx = canvas.getContext("2d");
 
@@ -114,13 +115,13 @@ function handleKeyPress(event) {
       playerRow = newRow;
       playerCol = newCol;
       playerSteps++;
-      inventoryDiv.innerHTML = "Inventory: " + inventoryCount + " Steps: " + playerSteps;
+      inventoryDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
     case TILE_DIRT:
       playerCol = newCol;
       playerRow = newRow;
       playerSteps++;
-      inventoryDiv.innerHTML = "Inventory: " + inventoryCount + " Steps: " + playerSteps;
+      inventoryDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
     case TILE_WATER:
       break;
@@ -132,7 +133,7 @@ function handleKeyPress(event) {
     case TILE_ROCK:
       tiles[newRow][newCol] = TILE_GRASS;
       inventoryCount++;
-      inventoryDiv.innerHTML = "Inventory: " + inventoryCount + " Steps: " + playerSteps;
+      inventoryDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
   }
 
@@ -152,6 +153,8 @@ function simpleHash(str) {
 
 // Initialize the game
 async function initGame() {
+  inventoryDiv.innerHTML = "Rocks Broken: 0<br/>Steps Taken: 0";
+
   try {
     // Get the address of the logged-in user
     let address = await new Promise((resolve, reject) => {
@@ -196,8 +199,7 @@ async function initGame() {
     }
 
     // Display the user's address
-    let addressDiv = document.getElementById("address");
-    addressDiv.innerHTML = "Playing as: " + address + " Seed: " + seed;
+    addressDiv.innerHTML = "Playing as: " + address + "<br/>Game Seed: " + seed;
 
     // Get the user's avatar
     let names = await qortalRequest({
@@ -206,7 +208,7 @@ async function initGame() {
     });
 
     if (names.length > 0) {
-      addressDiv.innerHTML = "Playing as: " + names[0].name + " Seed: " + seed;
+      addressDiv.innerHTML = "Playing as: " + names[0].name + "<br/>Game Seed: " + seed;
 
       let avatarBase64 = await qortalRequest({
         action: "FETCH_QDN_RESOURCE",
@@ -222,8 +224,7 @@ async function initGame() {
 
   } catch (error) {
     console.log(error);
-    let addressDiv = document.getElementById("address");
-    addressDiv.innerHTML = "Error: " + error;
+    addressDiv.innerHTML = "Error: " + error + "<br/>Unable to access account.";
     // Set up the tile types randomly
     for (let i = 0; i < ROWS; i++) {
       for (let j = 0; j < COLS; j++) {
