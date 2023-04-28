@@ -48,12 +48,19 @@ function drawTiles() {
   }
 }
 
+// Global variable to store the user's avatar
+let userAvatar = null;
+
 // Draw the player
 function drawPlayer() {
-  ctx.fillStyle = "yellow";
-  ctx.beginPath();
-  ctx.arc((playerCol + 0.5) * TILE_SIZE, (playerRow + 0.5) * TILE_SIZE, TILE_SIZE / 2, 0, 2 * Math.PI);
-  ctx.fill();
+  if (userAvatar) {
+    ctx.drawImage(userAvatar, playerCol * TILE_SIZE, playerRow * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  } else {
+    ctx.fillStyle = "yellow";
+    ctx.beginPath();
+    ctx.arc((playerCol + 0.5) * TILE_SIZE, (playerRow + 0.5) * TILE_SIZE, TILE_SIZE / 2, 0, 2 * Math.PI);
+    ctx.fill();
+  }
 }
 
 // Update the game state when a key is pressed
@@ -155,6 +162,25 @@ async function initGame() {
     // Display the user's address
     let addressDiv = document.getElementById("address");
     addressDiv.innerHTML = "Logged in as: " + address;
+
+    // Get the user's avatar
+    let names = await qortalRequest({
+      action: "GET_ACCOUNT_NAMES",
+      address: address
+    });
+
+    if (names.length > 0) {
+      let avatarBase64 = await qortalRequest({
+        action: "FETCH_QDN_RESOURCE",
+        name: names[0].name,
+        service: "THUMBNAIL",
+        identifier: "qortal_avatar",
+        encoding: "base64"
+      });
+
+      userAvatar = new Image();
+      userAvatar.src = "data:image/png;base64," + avatarBase64;
+    }
 
   } catch (error) {
     console.log(error);
