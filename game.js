@@ -94,27 +94,27 @@ function handleKeyPress(event) {
 
   switch (event.key) {
     case "ArrowUp":
-      newRow--;
-      break;
     case "w":
+    case "W":
+    case "8":
       newRow--;
       break;
     case "ArrowDown":
-      newRow++;
-      break;
     case "s":
+    case "S":
+    case "2":
       newRow++;
       break;
     case "ArrowLeft":
-      newCol--;
-      break;
     case "a":
+    case "A":
+    case "4":
       newCol--;
       break;
     case "ArrowRight":
-      newCol++;
-      break;
     case "d":
+    case "D":
+    case "6":
       newCol++;
       break;
     default:
@@ -194,7 +194,7 @@ function generateRandomTiles(seed) {
 
 // Initialize the game
 async function initGame() {
-  gameInfoDiv.innerHTML = "Version: 0.0.x<br/>Controls: WASD or Arrow Keys";
+  gameInfoDiv.innerHTML = "Version: 0.0.x<br/>Controls: WASD / Arrow Keys / NumPad";
   playerInfoDiv.innerHTML = "Rocks Broken: 0<br/>Steps Taken: 0";
 
   try {
