@@ -14,6 +14,19 @@ const TileType = {
   ROCK: 5
 };
 
+let tileImageGrass = new Image();
+tileImageGrass.src = "grass.png";
+let tileImageDirt = new Image();
+tileImageDirt.src = "dirt.png";
+let tileImageWater = new Image();
+tileImageWater.src = "water.png";
+let tileImageSand = new Image();
+tileImageSand.src = "sand.png";
+let tileImageRock = new Image();
+tileImageRock.src = "rock.gif";
+let tileImageQortal = new Image();
+tileImageQortal.src = "qlogo.png";
+
 // Define the tile size and the number of rows and columns
 let TILE_SIZE = 20;
 let ROWS = 20;
@@ -42,32 +55,24 @@ function drawTiles() {
     for (let j = 0; j < COLS; j++) {
       switch (tiles[i][j]) {
         case TileType.GRASS:
-          ctx.fillStyle = "green";
-          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.drawImage(tileImageGrass, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TileType.DIRT:
-          ctx.fillStyle = "brown";
-          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.drawImage(tileImageDirt, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TileType.WATER:
-          ctx.fillStyle = "blue";
-          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.drawImage(tileImageWater, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TileType.SAND:
-          ctx.fillStyle = "tan";
-          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.drawImage(tileImageSand, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TileType.BOULDER:
-          ctx.fillStyle = "gray";
-          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.drawImage(tileImageGrass, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.drawImage(tileImageRock, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TileType.ROCK:
-          ctx.fillStyle = "green";
-          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-          ctx.fillStyle = "gray";
-          ctx.beginPath();
-          ctx.arc((j + 0.5) * TILE_SIZE, (i + 0.5) * TILE_SIZE, TILE_SIZE / 2, 0, 2 * Math.PI);
-          ctx.fill();
+          ctx.drawImage(tileImageGrass, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.drawImage(tileImageRock, (j * TILE_SIZE)+(TILE_SIZE/5), (i * TILE_SIZE)+(TILE_SIZE/5), TILE_SIZE*3/5, TILE_SIZE*3/5);
           break;
       }
     }
@@ -82,10 +87,7 @@ function drawPlayer() {
   if (userAvatar) {
     ctx.drawImage(userAvatar, playerCol * TILE_SIZE, playerRow * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   } else {
-    ctx.fillStyle = DEFAULT_PLAYER_COLOR;
-    ctx.beginPath();
-    ctx.arc((playerCol + 0.5) * TILE_SIZE, (playerRow + 0.5) * TILE_SIZE, TILE_SIZE / 2, 0, 2 * Math.PI);
-    ctx.fill();
+    ctx.drawImage(tileImageQortal, playerCol * TILE_SIZE, playerRow * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
