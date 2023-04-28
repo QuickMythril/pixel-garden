@@ -1,4 +1,5 @@
 let canvas = document.getElementById("gameCanvas");
+let informationDiv = document.getElementById("information");
 let addressDiv = document.getElementById("address");
 let inventoryDiv = document.getElementById("inventory");
 let ctx = canvas.getContext("2d");
@@ -93,13 +94,25 @@ function handleKeyPress(event) {
     case "ArrowUp":
       newRow--;
       break;
+    case "w":
+      newRow--;
+      break;
     case "ArrowDown":
+      newRow++;
+      break;
+    case "s":
       newRow++;
       break;
     case "ArrowLeft":
       newCol--;
       break;
+    case "a":
+      newCol--;
+      break;
     case "ArrowRight":
+      newCol++;
+      break;
+    case "d":
       newCol++;
       break;
     default:
@@ -153,6 +166,7 @@ function simpleHash(str) {
 
 // Initialize the game
 async function initGame() {
+  informationDiv.innerHTML = "Version: 0.0.x<br/>Controls: WASD or Arrow Keys";
   inventoryDiv.innerHTML = "Rocks Broken: 0<br/>Steps Taken: 0";
 
   try {
