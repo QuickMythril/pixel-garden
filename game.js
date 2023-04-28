@@ -8,7 +8,7 @@ let ctx = canvas.getContext("2d");
 let TILE_GRASS = 0;
 let TILE_DIRT = 1;
 let TILE_WATER = 2;
-let TILE_BUILDING = 3;
+let TILE_SAND = 3;
 let TILE_BOULDER = 4;
 let TILE_ROCK = 5;
 
@@ -49,8 +49,8 @@ function drawTiles() {
           ctx.fillStyle = "blue";
           ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
-        case TILE_BUILDING:
-          ctx.fillStyle = "red";
+        case TILE_SAND:
+          ctx.fillStyle = "tan";
           ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TILE_BOULDER:
@@ -138,7 +138,11 @@ function handleKeyPress(event) {
       break;
     case TILE_WATER:
       break;
-    case TILE_BUILDING:
+    case TILE_SAND:
+      playerSteps++;
+      playerRow = newRow;
+      playerCol = newCol;
+      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
     case TILE_BOULDER:
       tiles[newRow][newCol] = TILE_ROCK;
@@ -203,7 +207,7 @@ async function initGame() {
         } else if (rand < 50) {
           tiles[i][j] = TILE_DIRT;
         } else if (rand < 60) {
-          tiles[i][j] = TILE_BUILDING;
+          tiles[i][j] = TILE_SAND;
         } else if (rand < 70) {
           tiles[i][j] = TILE_BOULDER;
         } else if (rand < 80) {
@@ -247,7 +251,7 @@ async function initGame() {
         } else if (Math.random() < 0.2) {
           tiles[i][j] = TILE_DIRT;
         } else if (Math.random() < 0.3) {
-          tiles[i][j] = TILE_BUILDING;
+          tiles[i][j] = TILE_SAND;
         } else if (Math.random() < 0.4) {
           tiles[i][j] = TILE_BOULDER;
         } else if (Math.random() < 0.5) {
