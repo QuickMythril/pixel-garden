@@ -1,4 +1,5 @@
 let canvas = document.getElementById("gameCanvas");
+let inventoryDiv = document.getElementById("inventory");
 let ctx = canvas.getContext("2d");
 
 // Define the tile types
@@ -26,6 +27,7 @@ for (let i = 0; i < ROWS; i++) {
 // Define the player's starting position
 let playerRow = 0;
 let playerCol = 0;
+let inventoryCount = 0;
 
 // Draw the tiles
 function drawTiles() {
@@ -124,6 +126,8 @@ function handleKeyPress(event) {
       break;
     case TILE_ROCK:
       tiles[newRow][newCol] = TILE_GRASS;
+      inventoryCount++;
+      inventoryDiv.innerHTML = "Inventory: " + inventoryCount;
       break;
   }
 
