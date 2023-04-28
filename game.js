@@ -19,6 +19,8 @@ let TILE_SIZE = 20;
 let ROWS = 20;
 let COLS = 20;
 
+const DEFAULT_PLAYER_COLOR = "yellow";
+
 // Create a 2D array to store the tile types for each cell
 let tiles = new Array(ROWS);
 for (let i = 0; i < ROWS; i++) {
@@ -80,7 +82,7 @@ function drawPlayer() {
   if (userAvatar) {
     ctx.drawImage(userAvatar, playerCol * TILE_SIZE, playerRow * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   } else {
-    ctx.fillStyle = "yellow";
+    ctx.fillStyle = DEFAULT_PLAYER_COLOR;
     ctx.beginPath();
     ctx.arc((playerCol + 0.5) * TILE_SIZE, (playerRow + 0.5) * TILE_SIZE, TILE_SIZE / 2, 0, 2 * Math.PI);
     ctx.fill();
@@ -93,17 +95,21 @@ function updatePlayer(newRow, newCol) {
     case TileType.GRASS:
     case TileType.DIRT:
     case TileType.SAND:
+      // Passable, player moves, steps increases
       playerRow = newRow;
       playerCol = newCol;
       playerSteps++;
       playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
     case TileType.WATER:
+      // Not passable
       break;
     case TileType.BOULDER:
+      // Boulder becomes rock
       tiles[newRow][newCol] = TileType.ROCK;
       break;
     case TileType.ROCK:
+      // Rock becomes grass, inventory increases
       tiles[newRow][newCol] = TileType.GRASS;
       inventoryCount++;
       playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
