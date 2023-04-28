@@ -87,6 +87,33 @@ function drawPlayer() {
   }
 }
 
+function updatePlayer(newRow, newCol) {
+  // Update player position and information
+  switch (tiles[newRow][newCol]) {
+    case TileType.GRASS:
+    case TileType.DIRT:
+    case TileType.SAND:
+      playerRow = newRow;
+      playerCol = newCol;
+      playerSteps++;
+      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
+      break;
+    case TileType.WATER:
+      break;
+    case TileType.BOULDER:
+      tiles[newRow][newCol] = TileType.ROCK;
+      break;
+    case TileType.ROCK:
+      tiles[newRow][newCol] = TileType.GRASS;
+      inventoryCount++;
+      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
+      break;
+  }
+
+  drawTiles();
+  drawPlayer();
+}
+
 // Update the game state when a key is pressed
 function handleKeyPress(event) {
   let newRow = playerRow;
@@ -125,39 +152,7 @@ function handleKeyPress(event) {
     return;
   }
 
-  switch (tiles[newRow][newCol]) {
-    case TileType.GRASS:
-      playerRow = newRow;
-      playerCol = newCol;
-      playerSteps++;
-      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
-      break;
-    case TileType.DIRT:
-      playerCol = newCol;
-      playerRow = newRow;
-      playerSteps++;
-      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
-      break;
-    case TileType.WATER:
-      break;
-    case TileType.SAND:
-      playerSteps++;
-      playerRow = newRow;
-      playerCol = newCol;
-      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
-      break;
-    case TileType.BOULDER:
-      tiles[newRow][newCol] = TileType.ROCK;
-      break;
-    case TileType.ROCK:
-      tiles[newRow][newCol] = TileType.GRASS;
-      inventoryCount++;
-      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
-      break;
-  }
-
-  drawTiles();
-  drawPlayer();
+  updatePlayer(newRow, newCol);
 }
 
 // Simple hash function based on user's address
