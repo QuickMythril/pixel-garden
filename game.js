@@ -161,6 +161,34 @@ function handleKeyPress(event) {
   updatePlayer(newRow, newCol);
 }
 
+function handleButtonClick(direction) {
+  let newRow = playerRow;
+  let newCol = playerCol;
+
+  switch (direction) {
+    case "up":
+      newRow--;
+      break;
+    case "down":
+      newRow++;
+      break;
+    case "left":
+      newCol--;
+      break;
+    case "right":
+      newCol++;
+      break;
+    default:
+      return;
+  }
+
+  if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
+    return;
+  }
+
+  updatePlayer(newRow, newCol);
+}
+
 // Simple hash function based on user's address
 function simpleHash(str) {
   let hash = 0;
@@ -195,8 +223,13 @@ function generateRandomTiles(seed) {
 
 // Initialize the game
 async function initGame() {
-  gameInfoDiv.innerHTML = "Version: 0.0.x<br/>Controls: WASD / Arrow Keys / NumPad";
+  gameInfoDiv.innerHTML = "Version: 0.0.x<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
   playerInfoDiv.innerHTML = "Rocks Broken: 0<br/>Steps Taken: 0";
+  document.getElementById("upButton").addEventListener("click", () => handleButtonClick("up"));
+  document.getElementById("downButton").addEventListener("click", () => handleButtonClick("down"));
+  document.getElementById("leftButton").addEventListener("click", () => handleButtonClick("left"));
+  document.getElementById("rightButton").addEventListener("click", () => handleButtonClick("right"));
+
 
   try {
     // Get the address of the logged-in user

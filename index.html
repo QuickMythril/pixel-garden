@@ -13,6 +13,27 @@
         display: block;
         margin: 0 auto;
       }
+      #controls {
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .arrowButton {
+        font-size: 24px;
+        padding: 10px;
+        background-color: #008fd5;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        margin: 5px;
+      }
+
+      .arrowButton:focus {
+        outline: none;
+      }
+
       #gameInfo {
         font-family: 'Lexend-Regular', sans-serif;
         color: #008fd5;
@@ -38,8 +59,18 @@
   </head>
   <body>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="controls">
+      <button id="upButton" class="arrowButton">⬆️</button>
+      <br/>
+      <button id="leftButton" class="arrowButton">⬅️</button>
+      <button id="downButton" class="arrowButton">⬇️</button>
+      <button id="rightButton" class="arrowButton">➡️</button>
+    </div>
+    <br/>
     <div id="gameInfo"></div>
+    <br/>
     <div id="accountInfo"></div>
+    <br/>
     <div id="playerInfo"></div>
     <script src="game.js"></script>
   </body>
