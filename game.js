@@ -15,15 +15,15 @@ const TileType = {
 };
 
 let tileImageGrass = new Image();
-tileImageGrass.src = "grass.png";
+tileImageGrass.src = "grass.jpeg";
 let tileImageDirt = new Image();
-tileImageDirt.src = "dirt.png";
+tileImageDirt.src = "dirt.jpeg";
 let tileImageWater = new Image();
-tileImageWater.src = "water.png";
+tileImageWater.src = "water.jpeg";
 let tileImageSand = new Image();
-tileImageSand.src = "sand.png";
+tileImageSand.src = "sand.jpeg";
 let tileImageRock = new Image();
-tileImageRock.src = "rock.gif";
+tileImageRock.src = "rock.png";
 let tileImageQortal = new Image();
 tileImageQortal.src = "qlogo.png";
 
