@@ -6,6 +6,8 @@ let TILE_GRASS = 0;
 let TILE_DIRT = 1;
 let TILE_WATER = 2;
 let TILE_BUILDING = 3;
+let TILE_BOULDER = 4;
+let TILE_ROCK = 5;
 
 // Define the tile size and the number of rows and columns
 let TILE_SIZE = 20;
@@ -32,18 +34,33 @@ function drawTiles() {
       switch (tiles[i][j]) {
         case TILE_GRASS:
           ctx.fillStyle = "green";
+          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TILE_DIRT:
           ctx.fillStyle = "brown";
+          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TILE_WATER:
           ctx.fillStyle = "blue";
+          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
         case TILE_BUILDING:
           ctx.fillStyle = "red";
+          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
+        case TILE_BOULDER:
+          ctx.fillStyle = "gray";
+          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
+        case TILE_ROCK:
+          ctx.fillStyle = "green";
+          ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          ctx.fillStyle = "gray";
+          ctx.beginPath();
+          ctx.arc((j + 0.5) * TILE_SIZE, (i + 0.5) * TILE_SIZE, TILE_SIZE / 2, 0, 2 * Math.PI);
+          ctx.fill();
           break;
       }
-      ctx.fillRect(j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
   }
 }
@@ -102,6 +119,12 @@ function handleKeyPress(event) {
       break;
     case TILE_BUILDING:
       break;
+    case TILE_BOULDER:
+      tiles[newRow][newCol] = TILE_ROCK;
+      break;
+    case TILE_ROCK:
+      tiles[newRow][newCol] = TILE_GRASS;
+      break;
   }
 
   drawTiles();
@@ -155,6 +178,10 @@ async function initGame() {
           tiles[i][j] = TILE_DIRT;
         } else if (rand < 60) {
           tiles[i][j] = TILE_BUILDING;
+        } else if (rand < 70) {
+          tiles[i][j] = TILE_BOULDER;
+        } else if (rand < 80) {
+          tiles[i][j] = TILE_ROCK;
         }
       }
     }
@@ -191,12 +218,16 @@ async function initGame() {
     // Set up the tile types randomly
     for (let i = 0; i < ROWS; i++) {
       for (let j = 0; j < COLS; j++) {
-        if (Math.random() < 0.2) {
+        if (Math.random() < 0.1) {
           tiles[i][j] = TILE_WATER;
-        } else if (Math.random() < 0.3) {
+        } else if (Math.random() < 0.2) {
           tiles[i][j] = TILE_DIRT;
-        } else if (Math.random() < 0.1) {
+        } else if (Math.random() < 0.3) {
           tiles[i][j] = TILE_BUILDING;
+        } else if (Math.random() < 0.4) {
+          tiles[i][j] = TILE_BOULDER;
+        } else if (Math.random() < 0.5) {
+          tiles[i][j] = TILE_ROCK;
         }
       }
     }
