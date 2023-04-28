@@ -28,6 +28,7 @@ for (let i = 0; i < ROWS; i++) {
 let playerRow = 0;
 let playerCol = 0;
 let inventoryCount = 0;
+let playerSteps = 0;
 
 // Draw the tiles
 function drawTiles() {
@@ -112,10 +113,14 @@ function handleKeyPress(event) {
     case TILE_GRASS:
       playerRow = newRow;
       playerCol = newCol;
+      playerSteps++;
+      inventoryDiv.innerHTML = "Inventory: " + inventoryCount + " Steps: " + playerSteps;
       break;
     case TILE_DIRT:
       playerCol = newCol;
       playerRow = newRow;
+      playerSteps++;
+      inventoryDiv.innerHTML = "Inventory: " + inventoryCount + " Steps: " + playerSteps;
       break;
     case TILE_WATER:
       break;
@@ -127,7 +132,7 @@ function handleKeyPress(event) {
     case TILE_ROCK:
       tiles[newRow][newCol] = TILE_GRASS;
       inventoryCount++;
-      inventoryDiv.innerHTML = "Inventory: " + inventoryCount;
+      inventoryDiv.innerHTML = "Inventory: " + inventoryCount + " Steps: " + playerSteps;
       break;
   }
 
