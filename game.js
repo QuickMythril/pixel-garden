@@ -161,7 +161,7 @@ async function initGame() {
 
     // Display the user's address
     let addressDiv = document.getElementById("address");
-    addressDiv.innerHTML = "Playing as: " + address;
+    addressDiv.innerHTML = "Playing as: " + address + " Seed: " + seed;
 
     // Get the user's avatar
     let names = await qortalRequest({
@@ -170,7 +170,7 @@ async function initGame() {
     });
 
     if (names.length > 0) {
-      addressDiv.innerHTML = "Playing as: " + names[0].name;
+      addressDiv.innerHTML = "Playing as: " + names[0].name + " Seed: " + seed;
 
       let avatarBase64 = await qortalRequest({
         action: "FETCH_QDN_RESOURCE",
