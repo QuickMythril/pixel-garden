@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.0.1a<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
+let versionString = "Q-App Game Demo - Version: 0.0.2 (stable)<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -212,16 +212,28 @@ function handleButtonClick(direction) {
 
   switch (direction) {
     case "up":
-      newRow--;
+      if (playerDirection == "up") {
+        newRow--;
+      }
+      playerDirection = "up";
       break;
     case "down":
-      newRow++;
+      if (playerDirection == "down") {
+        newRow++;
+      }
+      playerDirection = "down";
       break;
     case "left":
-      newCol--;
+      if (playerDirection == "left") {
+        newCol--;
+      }
+      playerDirection = "left";
       break;
     case "right":
-      newCol++;
+      if (playerDirection == "right") {
+        newCol++;
+      }
+      playerDirection = "right";
       break;
     default:
       return;
