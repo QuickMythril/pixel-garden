@@ -1,3 +1,5 @@
+let versionString = "Q-App Game Demo - Version: 0.0.1 (stable)<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
+
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
 let chainInfoDiv = document.getElementById("chainInfo");
@@ -343,7 +345,7 @@ async function getCurrentHeight() {
 
 // Initialize the game
 async function initGame() {
-  gameInfoDiv.innerHTML = "Q-App Game Demo - Version: 0.0.1<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
+  gameInfoDiv.innerHTML = versionString;
   playerInfoDiv.innerHTML = "Rocks Broken: 0<br/>Steps Taken: 0";
   document.getElementById("upButton").addEventListener("click", () => handleButtonClick("up"));
   document.getElementById("downButton").addEventListener("click", () => handleButtonClick("down"));
