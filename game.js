@@ -1,5 +1,6 @@
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
+let chainInfoDiv = document.getElementById("chainInfo");
 let accountInfoDiv = document.getElementById("accountInfo");
 let playerInfoDiv = document.getElementById("playerInfo");
 let ctx = canvas.getContext("2d");
@@ -223,6 +224,17 @@ function generateRandomTiles(seed) {
   }
 }
 
+// Get current Qortal blockchain height
+async function getCurrentHeight() {
+  let heightResponse = await fetch("/blocks/height");
+  let currentHeight = await heightResponse.json();
+  if (currentHeight) {
+      chainInfoDiv.innerHTML = "Current Height: " + JSON.stringify(currentHeight);
+  } else {
+      chainInfoDiv.innerHTML = "Current Height Unavailable";
+  }
+}
+
 // Initialize the game
 async function initGame() {
   gameInfoDiv.innerHTML = "Version: 0.0.x<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
@@ -232,6 +244,8 @@ async function initGame() {
   document.getElementById("leftButton").addEventListener("click", () => handleButtonClick("left"));
   document.getElementById("rightButton").addEventListener("click", () => handleButtonClick("right"));
 
+  // Get current Qortal blockchain height
+  getCurrentHeight();  
 
   try {
     // Get the address of the logged-in user
@@ -285,7 +299,8 @@ async function initGame() {
 
   } catch (error) {
     console.log(error);
-    accountInfoDiv.innerHTML = "Error: " + error + "<br/>Unable to access account.";
+    chainInfoDiv.innerHTML = "Error: " + error + "<br/>Error: " + JSON.stringify(error) + "<br/>Unable to access blockchain.";
+    accountInfoDiv.innerHTML = "Error: " + error + "<br/>Error: " + JSON.stringify(error) + "<br/>Unable to access account.";
     // Set up the tile types randomly
     for (let i = 0; i < ROWS; i++) {
       for (let j = 0; j < COLS; j++) {
@@ -310,6 +325,8 @@ async function initGame() {
 
   // Add event listener to handle key presses
   document.addEventListener("keydown", handleKeyPress);
+
+  setInterval(getCurrentHeight, 10000);
 }
 
 // Start the game
