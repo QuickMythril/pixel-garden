@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.0.2 (stable)<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
+let versionString = "Q-App Game Demo - Version: 0.0.3 (stable)<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -14,7 +14,8 @@ const TileType = {
   WATER: 2,
   SAND: 3,
   BOULDER: 4,
-  ROCK: 5
+  ROCK: 5,
+  STONE: 6
 };
 
 let tileImageGrass = new Image();
@@ -27,6 +28,8 @@ let tileImageSand = new Image();
 tileImageSand.src = "sand.jpeg";
 let tileImageRock = new Image();
 tileImageRock.src = "rock.png";
+let tileImageStone = new Image();
+tileImageStone.src = "stone.jpeg";
 let tileImageQortal = new Image();
 tileImageQortal.src = "qlogo.png";
 
@@ -78,6 +81,9 @@ function drawTiles() {
           ctx.drawImage(tileImageGrass, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           ctx.drawImage(tileImageRock, (j * TILE_SIZE)+(TILE_SIZE/5), (i * TILE_SIZE)+(TILE_SIZE/5), TILE_SIZE*3/5, TILE_SIZE*3/5);
           break;
+        case TileType.STONE:
+          ctx.drawImage(tileImageStone, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
       }
     }
   }
@@ -120,6 +126,41 @@ function drawPlayer() {
 
   ctx.fillRect(indicatorX, indicatorY, indicatorSize, indicatorSize);
 
+}
+
+function placeStone() {
+  let placeRowOffset = 0;
+  let placeColOffset = 0;
+  switch (playerDirection) {
+    case "up":
+      placeRowOffset -= 1;
+      break;
+    case "down":
+      placeRowOffset += 1;
+      break;
+    case "left":
+      placeColOffset -= 1;
+      break;
+    case "right":
+      placeColOffset += 1;
+      break;
+  }
+  switch (tiles[playerRow + placeRowOffset][playerCol + placeColOffset]) {
+    case TileType.STONE:
+    case TileType.WATER:
+    case TileType.BOULDER:
+    case TileType.ROCK:
+      break;
+    case TileType.GRASS:
+    case TileType.DIRT:
+    case TileType.SAND:
+      tiles[playerRow + placeRowOffset][playerCol + placeColOffset] = TileType.STONE;
+      inventoryCount -= 5;
+      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
+      drawTiles();
+      drawPlayer();
+      break;
+  }
 }
 
 function updatePlayer(newRow, newCol) {
@@ -195,11 +236,23 @@ function handleKeyPress(event) {
       }
       playerDirection = "right";
       break;
+    case "x":
+    case "X":
+      if (inventoryCount > 4) {
+        placeStone();
+      }
+      break;
     default:
       return;
   }
 
   if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
+    return;
+  }
+
+  if (newRow == playerRow && newCol == playerCol) {
+    drawTiles();
+    drawPlayer();
     return;
   }
 
