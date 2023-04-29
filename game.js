@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.1.0<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons<br/>Press X to place a stone block";
+let versionString = "Q-App Game Demo - Version: 0.1.1<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons<br/>Press X to place a stone block";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -159,7 +159,7 @@ function placeStone() {
     case TileType.SAND:
       tiles[playerRow + placeRowOffset][playerCol + placeColOffset] = TileType.STONE;
       inventoryCount -= 2;
-      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
+      playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       drawTiles();
       drawPlayer();
       break;
@@ -176,7 +176,7 @@ function updatePlayer(newRow, newCol) {
       playerRow = newRow;
       playerCol = newCol;
       playerSteps++;
-      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
+      playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
     case TileType.WATER:
       // Not passable
@@ -189,7 +189,7 @@ function updatePlayer(newRow, newCol) {
       // Rock becomes grass, inventory increases
       tiles[newRow][newCol] = TileType.GRASS;
       inventoryCount++;
-      playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
+      playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
   }
 
@@ -350,7 +350,29 @@ async function sendChatMessage(message) {
     });
     updateChatMessages();
   } catch (error) {
-    console.error("Error sending chat message:", error);
+    
+    switch (error.error) {
+      case "invalid signature":
+        chatMessagesDiv.innerHTML += "<p>4.2 QORT minimum required to prevent spam.  PoW not implemented yet.  Please use Q-Chat to post in this group.</p>";
+        break;
+      case "transaction invalid: invalid transaction group ID (INVALID_TX_GROUP_ID)":
+        joinGameChat();
+        break;
+      default:
+        chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+        break;
+    }
+  }
+}
+
+async function joinGameChat() {
+  chatMessagesDiv.innerHTML += "<p>Attempting to join the group, please wait a minute and try your message again.</p>";
+  try {
+    await qortalRequest({
+      action: "JOIN_GROUP",
+      groupId: 4
+    });
+  } catch (error) {
     chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
   }
 }
@@ -412,7 +434,7 @@ async function getCurrentHeight() {
 // Initialize the game
 async function initGame() {
   gameInfoDiv.innerHTML = versionString;
-  playerInfoDiv.innerHTML = "Rocks Broken: 0<br/>Steps Taken: 0";
+  playerInfoDiv.innerHTML = "Rocks Held: 0<br/>Steps Taken: 0";
   document.getElementById("upButton").addEventListener("click", () => handleButtonClick("up"));
   document.getElementById("downButton").addEventListener("click", () => handleButtonClick("down"));
   document.getElementById("leftButton").addEventListener("click", () => handleButtonClick("left"));
