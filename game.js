@@ -49,6 +49,7 @@ let playerRow = 0;
 let playerCol = 0;
 let inventoryCount = 0;
 let playerSteps = 0;
+let playerDirection = "down";
 
 // Draw the tiles
 function drawTiles() {
@@ -90,6 +91,33 @@ function drawPlayer() {
   } else {
     ctx.drawImage(tileImageQortal, playerCol * TILE_SIZE, playerRow * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
+
+  // Draw direction indicator
+  ctx.fillStyle = 'blue';
+  let indicatorX, indicatorY;
+  let indicatorSize = 4;
+
+  switch (playerDirection) {
+    case "up":
+      indicatorX = playerCol * TILE_SIZE + TILE_SIZE / 2 - indicatorSize / 2;
+      indicatorY = playerRow * TILE_SIZE - indicatorSize;
+      break;
+    case "down":
+      indicatorX = playerCol * TILE_SIZE + TILE_SIZE / 2 - indicatorSize / 2;
+      indicatorY = (playerRow + 1) * TILE_SIZE;
+      break;
+    case "left":
+      indicatorX = playerCol * TILE_SIZE - indicatorSize;
+      indicatorY = playerRow * TILE_SIZE + TILE_SIZE / 2 - indicatorSize / 2;
+      break;
+    case "right":
+      indicatorX = (playerCol + 1) * TILE_SIZE;
+      indicatorY = playerRow * TILE_SIZE + TILE_SIZE / 2 - indicatorSize / 2;
+      break;
+  }
+
+  ctx.fillRect(indicatorX, indicatorY, indicatorSize, indicatorSize);
+
 }
 
 function updatePlayer(newRow, newCol) {
@@ -133,25 +161,37 @@ function handleKeyPress(event) {
     case "w":
     case "W":
     case "8":
-      newRow--;
+      if (playerDirection == "up") {
+        newRow--;
+      }
+      playerDirection = "up";
       break;
     case "ArrowDown":
     case "s":
     case "S":
     case "2":
-      newRow++;
+      if (playerDirection == "down") {
+        newRow++;
+      }
+      playerDirection = "down";
       break;
     case "ArrowLeft":
     case "a":
     case "A":
     case "4":
-      newCol--;
+      if (playerDirection == "left") {
+        newCol--;
+      }
+      playerDirection = "left";
       break;
     case "ArrowRight":
     case "d":
     case "D":
     case "6":
-      newCol++;
+      if (playerDirection == "right") {
+        newCol++;
+      }
+      playerDirection = "right";
       break;
     default:
       return;
