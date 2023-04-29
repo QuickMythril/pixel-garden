@@ -203,7 +203,7 @@ async function updateChatMessages() {
       action: "SEARCH_CHAT_MESSAGES",
       txGroupId: 4,
       limit: 100,
-      reverse: true
+      reverse: false
     });
 
     chatMessagesDiv.innerHTML = "";
