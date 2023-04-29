@@ -192,6 +192,72 @@ function handleButtonClick(direction) {
   updatePlayer(newRow, newCol);
 }
 
+// Add these lines to define chat elements
+let chatMessagesDiv = document.getElementById("chatMessages");
+let chatInput = document.getElementById("chatInput");
+
+// Add a function to update the chat messages
+async function updateChatMessages() {
+  try {
+    let res = await qortalRequest({
+      action: "SEARCH_CHAT_MESSAGES",
+      txGroupId: 4,
+      limit: 100,
+      reverse: true
+    });
+
+    chatMessagesDiv.innerHTML = "";
+    let MAP = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+    let from_b58 = function(S,A){var d=[],b=[],i,j,c,n;for(i in S){j=0,c=A.indexOf(S[i]);if(c<0)return undefined;c||b.length^i?i:b.push(0);while(j in d||c){n=d[j];n=n?n*58+c:c;c=n>>8;d[j]=n%256;j++}}while(j--)b.push(d[j]);return new Uint8Array(b)};
+
+    for (const element of res) {
+      // Decode the base58 encoded data
+      const decodedData = from_b58(element.data, MAP);
+      // Convert the decoded Uint8Array to a string
+      const decodedString = new TextDecoder().decode(decodedData);
+      // Parse the string as JSON
+      const messageJSON = JSON.parse(decodedString);
+      // Access the "text" value
+      const messageText = messageJSON.messageText.content[0].content[0].text;
+
+      chatMessagesDiv.innerHTML += "<p><strong>" + element.senderName + "</strong>: " + messageText + "</p>";
+    }
+
+    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+  } catch (error) {
+    chatMessagesDiv.innerHTML = "";
+    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
+    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+    console.error("Error updating chat messages:", error);
+  }
+}
+
+// Add a function to send a chat message
+async function sendChatMessage(message) {
+  try {
+    await qortalRequest({
+      action: "SEND_CHAT_MESSAGE",
+      groupId: 4,
+      message: message
+    });
+    updateChatMessages();
+  } catch (error) {
+    console.error("Error sending chat message:", error);
+    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+  }
+}
+
+// Add event listeners for the chat input
+chatInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    if (chatInput.value.trim() !== "") {
+      sendChatMessage(chatInput.value.trim());
+      chatInput.value = "";
+    }
+  }
+});
+
 // Simple hash function based on user's address
 function simpleHash(str) {
   let hash = 0;
@@ -243,9 +309,6 @@ async function initGame() {
   document.getElementById("downButton").addEventListener("click", () => handleButtonClick("down"));
   document.getElementById("leftButton").addEventListener("click", () => handleButtonClick("left"));
   document.getElementById("rightButton").addEventListener("click", () => handleButtonClick("right"));
-
-  // Get current Qortal blockchain height
-  getCurrentHeight();  
 
   try {
     // Get the address of the logged-in user
@@ -326,9 +389,12 @@ async function initGame() {
   // Add event listener to handle key presses
   document.addEventListener("keydown", handleKeyPress);
 
+  // Periodically check blockchain height and chat messages
+  getCurrentHeight();  
   setInterval(getCurrentHeight, 10000);
+  updateChatMessages();
+  setInterval(updateChatMessages, 29000);
 }
 
 // Start the game
 initGame();
-

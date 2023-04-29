@@ -60,10 +60,36 @@
       font-weight: normal;
       font-style: normal;
       }
+      #container {
+        display: flex;
+      }
+      #chatContainer {
+        width: 300px;
+        margin-left: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+      #chatMessages {
+        height: 400px;
+        overflow-y: auto;
+        border: 1px solid black;
+        padding: 5px;
+        font-size: small;
+      }
+      #chatInput {
+        margin-top: 5px;
+        width: 100%;
+      }
     </style>
   </head>
   <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="container">
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
+      <div id="chatContainer">
+        <div id="chatMessages"></div>
+        <input type="text" id="chatInput" placeholder="Type a message...">
+      </div>
+    </div>
     <div id="controls">
       <button id="upButton" class="arrowButton">⬆️</button>
       <br/>
