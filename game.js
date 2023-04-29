@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.0.3<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons";
+let versionString = "Q-App Game Demo - Version: 0.1.0<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons<br/>Press X to place a stone block";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -129,6 +129,9 @@ function drawPlayer() {
 }
 
 function placeStone() {
+  if (inventoryCount < 2) {
+    return;
+  }
   let placeRowOffset = 0;
   let placeColOffset = 0;
   switch (playerDirection) {
@@ -155,7 +158,7 @@ function placeStone() {
     case TileType.DIRT:
     case TileType.SAND:
       tiles[playerRow + placeRowOffset][playerCol + placeColOffset] = TileType.STONE;
-      inventoryCount -= 5;
+      inventoryCount -= 2;
       playerInfoDiv.innerHTML = "Rocks Broken: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       drawTiles();
       drawPlayer();
@@ -238,9 +241,7 @@ function handleKeyPress(event) {
       break;
     case "x":
     case "X":
-      if (inventoryCount > 4) {
-        placeStone();
-      }
+      placeStone();
       break;
     default:
       return;
@@ -416,6 +417,7 @@ async function initGame() {
   document.getElementById("downButton").addEventListener("click", () => handleButtonClick("down"));
   document.getElementById("leftButton").addEventListener("click", () => handleButtonClick("left"));
   document.getElementById("rightButton").addEventListener("click", () => handleButtonClick("right"));
+  document.getElementById("placeButton").addEventListener("click", () => placeStone());
 
   try {
     // Get the address of the logged-in user
