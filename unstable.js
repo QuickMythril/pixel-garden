@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.1.3a<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
+let versionString = "Q-App Game Demo - Version: 0.1.3a - 2023/04/29<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
