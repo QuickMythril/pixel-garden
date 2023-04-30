@@ -65,17 +65,6 @@ body {
   background-color: #004fd5;
 }
 
-.hiddenButton {
-  visibility: hidden;
-  font-size: 24px;
-  padding: 10px;
-  background-color: #008fd5;
-  color: #ffffff;
-  border: none;
-  cursor: pointer;
-  margin: 5px;
-}
-
 /* Game Info */
 #gameInfo,
 #chainInfo,
