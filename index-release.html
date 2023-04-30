@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixel Garden</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <!-- Add header content if needed -->
+  </header>
+  <main>
+    <section id="gameSection">
+      <div id="container">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div id="chatContainer">
+          <div id="chatMessages"></div>
+          <input type="text" id="chatInput" placeholder="Type a message...">
+        </div>
+      </div>
+      <div id="controls">
+        <button id="emptyButton" class="hiddenButton">X</button>
+        <button id="upButton" class="arrowButton">⬆️</button>
+        <button id="placeButton" class="arrowButton">X</button>
+        <br/>
+        <button id="leftButton" class="arrowButton">⬅️</button>
+        <button id="downButton" class="arrowButton">⬇️</button>
+        <button id="rightButton" class="arrowButton">➡️</button>
+      </div>
+      <br/>
+      <div id="gameInfo"></div>
+      <br/>
+      <div id="chainInfo"></div>
+      <br/>
+      <div id="accountInfo"></div>
+      <br/>
+      <div id="playerInfo"></div>
+    </section>
+  </main>
+  <footer>
+    <!-- Add footer content if needed -->
+  </footer>
+  <script src="game.js"></script>
+</body>
+</html>

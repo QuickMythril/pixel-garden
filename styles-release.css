@@ -1,0 +1,95 @@
+body {
+  font-family: 'Lexend-Regular', sans-serif;
+  color: #008fd5;
+}
+
+/* Game Section */
+#gameCanvas {
+  border: 1px solid black;
+  display: block;
+  margin: 0 auto;
+}
+
+#container {
+  display: flex;
+}
+
+/* Chat Section */
+#chatContainer {
+  width: 300px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+#chatMessages {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid black;
+  padding: 5px;
+  font-size: small;
+}
+
+#chatInput {
+  margin-top: 5px;
+  width: 90%;
+  border-radius: 4px;
+  padding: 6px 12px;
+  border: 1px solid #008fd5;
+  background-color: #f2f2f2;
+}
+
+/* Controls */
+#controls {
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.arrowButton {
+  font-size: 24px;
+  padding: 10px;
+  background-color: #008fd5;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.arrowButton:focus {
+  outline: none;
+}
+
+.arrowButton:hover {
+  background-color: #004fd5;
+}
+
+.hiddenButton {
+  visibility: hidden;
+  font-size: 24px;
+  padding: 10px;
+  background-color: #008fd5;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  margin: 5px;
+}
+
+/* Game Info */
+#gameInfo,
+#chainInfo,
+#accountInfo,
+#playerInfo {
+  font-family: 'Lexend-Regular', sans-serif;
+  color: #008fd5;
+  text-align: center;
+}
+
+/* Font Face */
+@font-face {
+  font-family: 'Lexend-Regular';
+  src: url('Lexend-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
