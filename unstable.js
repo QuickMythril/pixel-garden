@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.1.2a<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons<br/>Press X to place a stone block";
+let versionString = "Q-App Game Demo - Version: 0.1.3a<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -129,27 +129,27 @@ function drawPlayer() {
 
 }
 
-function placeStone() {
+function playerItem() {
   if (inventoryCount < 2) {
     return;
   }
-  let placeRowOffset = 0;
-  let placeColOffset = 0;
+  let tileRow = playerRow;
+  let tileCol = playerCol;
   switch (playerDirection) {
     case "up":
-      placeRowOffset -= 1;
+      tileRow -= 1;
       break;
     case "down":
-      placeRowOffset += 1;
+      tileRow += 1;
       break;
     case "left":
-      placeColOffset -= 1;
+      tileCol -= 1;
       break;
     case "right":
-      placeColOffset += 1;
+      tileCol += 1;
       break;
   }
-  switch (tiles[playerRow + placeRowOffset][playerCol + placeColOffset]) {
+  switch (tiles[tileRow][tileCol]) {
     case TileType.STONE:
     case TileType.WATER:
     case TileType.BOULDER:
@@ -158,38 +158,73 @@ function placeStone() {
     case TileType.GRASS:
     case TileType.DIRT:
     case TileType.SAND:
-      tiles[playerRow + placeRowOffset][playerCol + placeColOffset] = TileType.STONE;
+      tiles[tileRow][tileCol] = TileType.STONE;
       inventoryCount -= 2;
-      playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       refreshScreen();
       break;
   }
 }
 
+function playerAction() {
+  let tileRow = playerRow;
+  let tileCol = playerCol;
+  switch (playerDirection) {
+    case "up":
+      tileRow -= 1;
+      break;
+    case "down":
+      tileRow += 1;
+      break;
+    case "left":
+      tileCol -= 1;
+      break;
+    case "right":
+      tileCol += 1;
+      break;
+  }
+  switch (tiles[tileRow][tileCol]) {
+    case TileType.STONE:
+      tiles[tileRow][tileCol] = TileType.BOULDER;
+      break;
+    case TileType.WATER:
+      tiles[tileRow][tileCol] = TileType.SAND;
+      break;
+    case TileType.BOULDER:
+      tiles[tileRow][tileCol] = TileType.ROCK;
+      break;
+    case TileType.ROCK:
+      tiles[tileRow][tileCol] = TileType.GRASS;
+      inventoryCount += 1;
+      break;
+    case TileType.GRASS:
+    case TileType.SAND:
+      tiles[tileRow][tileCol] = TileType.DIRT;
+      break;
+    case TileType.DIRT:
+      break;
+  }
+  refreshScreen();
+}
+
 function updatePlayer(newRow, newCol) {
   // Update player position and information
   switch (tiles[newRow][newCol]) {
+    // Passable, player moves, steps increases
     case TileType.GRASS:
     case TileType.DIRT:
     case TileType.SAND:
-      // Passable, player moves, steps increases
       playerRow = newRow;
       playerCol = newCol;
       playerSteps++;
-      playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
       break;
+    // Not passable
     case TileType.WATER:
-      // Not passable
-      break;
     case TileType.BOULDER:
-      // Boulder becomes rock
-      tiles[newRow][newCol] = TileType.ROCK;
-      break;
     case TileType.ROCK:
-      // Rock becomes grass, inventory increases
-      tiles[newRow][newCol] = TileType.GRASS;
-      inventoryCount++;
-      playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
+    case TileType.STONE:
+    default:
+      break;
+      
       break;
   }
 
@@ -240,7 +275,11 @@ function handleKeyPress(event) {
       break;
     case "x":
     case "X":
-      placeStone();
+      playerAction();
+      break;
+    case "o":
+    case "O":
+      playerItem();
       break;
     default:
       return;
@@ -449,6 +488,7 @@ async function getCurrentHeight() {
 function refreshScreen() {
   drawTiles();
   drawPlayer();
+  playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
 }
 
 // Initialize the game
@@ -459,7 +499,8 @@ async function initGame() {
   document.getElementById("downButton").addEventListener("click", () => handleButtonClick("down"));
   document.getElementById("leftButton").addEventListener("click", () => handleButtonClick("left"));
   document.getElementById("rightButton").addEventListener("click", () => handleButtonClick("right"));
-  document.getElementById("placeButton").addEventListener("click", () => placeStone());
+  document.getElementById("actionButton").addEventListener("click", () => playerAction());
+  document.getElementById("itemButton").addEventListener("click", () => playerItem());
 
   try {
     // Get the address of the logged-in user
