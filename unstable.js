@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.1.1a<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons<br/>Press X to place a stone block";
+let versionString = "Q-App Game Demo - Version: 0.1.2a<br/>KB Controls: WASD / Arrow Keys / NumPad<br/>Mouse/Touch: On-Screen Buttons<br/>Press X to place a stone block";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -55,6 +55,7 @@ let playerCol = 0;
 let inventoryCount = 0;
 let playerSteps = 0;
 let playerDirection = "down";
+let blockchainHeight = 0;
 
 // Draw the tiles
 function drawTiles() {
@@ -160,8 +161,7 @@ function placeStone() {
       tiles[playerRow + placeRowOffset][playerCol + placeColOffset] = TileType.STONE;
       inventoryCount -= 2;
       playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
-      drawTiles();
-      drawPlayer();
+      refreshScreen();
       break;
   }
 }
@@ -193,8 +193,7 @@ function updatePlayer(newRow, newCol) {
       break;
   }
 
-  drawTiles();
-  drawPlayer();
+  refreshScreen();
 }
 
 // Update the game state when a key is pressed
@@ -252,8 +251,7 @@ function handleKeyPress(event) {
   }
 
   if (newRow == playerRow && newCol == playerCol) {
-    drawTiles();
-    drawPlayer();
+    refreshScreen();
     return;
   }
 
@@ -366,7 +364,7 @@ async function sendChatMessage(message) {
 }
 
 async function joinGameChat() {
-  chatMessagesDiv.innerHTML += "<p>Attempting to join the group, please wait a minute and try your message again.</p>";
+  chatMessagesDiv.innerHTML += "<p>Attempting to join the group, please wait a few minutes and try your message again.</p>";
   try {
     await qortalRequest({
       action: "JOIN_GROUP",
@@ -420,15 +418,37 @@ function generateRandomTiles(seed) {
   }
 }
 
+function updateTiles() {
+  // Iterate through the tiles and change dirt tiles to grass tiles with a 10% chance
+  for (let i = 0; i < ROWS; i++) {
+    for (let j = 0; j < COLS; j++) {
+      if (tiles[i][j] === TileType.DIRT && Math.random() < 0.1) {
+        tiles[i][j] = TileType.GRASS;
+      }
+    }
+  }
+  // Redraw the tiles to show the updated state
+  refreshScreen();
+}
+
 // Get current Qortal blockchain height
 async function getCurrentHeight() {
   let heightResponse = await fetch("/blocks/height");
   let currentHeight = await heightResponse.json();
   if (currentHeight) {
       chainInfoDiv.innerHTML = "Current Height: " + JSON.stringify(currentHeight);
+      if (currentHeight > blockchainHeight) {
+        blockchainHeight = currentHeight;
+        updateTiles();
+      }
   } else {
       chainInfoDiv.innerHTML = "Current Height Unavailable";
   }
+}
+
+function refreshScreen() {
+  drawTiles();
+  drawPlayer();
 }
 
 // Initialize the game
@@ -513,8 +533,7 @@ async function initGame() {
   }
 
   // Draw the initial game state
-  drawTiles();
-  drawPlayer();
+  refreshScreen();
 
   // Add event listener to handle key presses
   document.addEventListener("keydown", handleKeyPress);
