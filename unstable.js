@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.2.0b - 2023/05/02<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
+let versionString = "Q-App Game Demo - Version: 0.2.1a - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -12,10 +12,14 @@ const TileType = {
   GRASS: 0,
   DIRT: 1,
   WATER: 2,
-  SAND: 3,
-  BOULDER: 4,
-  ROCK: 5,
-  STONE: 6
+  SAND: 3
+};
+
+const ItemType = {
+  NONE: 0,
+  BOULDER: 1,
+  ROCK: 2,
+  STONE: 3
 };
 
 let tileImageGrass = new Image();
@@ -38,14 +42,19 @@ let TILE_SIZE = 20;
 let ROWS = 20;
 let COLS = 20;
 
-const DEFAULT_PLAYER_COLOR = "yellow";
-
 // Create a 2D array to store the tile types for each cell
 let tiles = new Array(ROWS);
 for (let i = 0; i < ROWS; i++) {
   tiles[i] = new Array(COLS);
   for (let j = 0; j < COLS; j++) {
     tiles[i][j] = TileType.GRASS;
+  }
+}
+let items = new Array(ROWS);
+for (let i = 0; i < ROWS; i++) {
+  items[i] = new Array(COLS);
+  for (let j = 0; j < COLS; j++) {
+    items[i][j] = ItemType.NONE;
   }
 }
 
@@ -75,16 +84,20 @@ function drawTiles() {
         case TileType.SAND:
           ctx.drawImage(tileImageSand, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
-        case TileType.BOULDER:
-          ctx.drawImage(tileImageGrass, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        default:
+          break;
+      }
+      switch (items[i][j]) {
+        case ItemType.BOULDER:
           ctx.drawImage(tileImageRock, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
           break;
-        case TileType.ROCK:
-          ctx.drawImage(tileImageGrass, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        case ItemType.ROCK:
           ctx.drawImage(tileImageRock, (j * TILE_SIZE)+(TILE_SIZE/5), (i * TILE_SIZE)+(TILE_SIZE/5), TILE_SIZE*3/5, TILE_SIZE*3/5);
           break;
-        case TileType.STONE:
+        case ItemType.STONE:
           ctx.drawImage(tileImageStone, j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          break;
+        default:
           break;
       }
     }
@@ -150,19 +163,22 @@ function playerItem() {
       tileCol += 1;
       break;
   }
+  switch (items[tileRow][tileCol]) {
+    case ItemType.BOULDER:
+    case ItemType.ROCK:
+    case ItemType.STONE:
+      return;
+  }
   switch (tiles[tileRow][tileCol]) {
-    case TileType.STONE:
     case TileType.WATER:
-    case TileType.BOULDER:
-    case TileType.ROCK:
-      break;
+      return;
     case TileType.GRASS:
     case TileType.DIRT:
     case TileType.SAND:
-      tiles[tileRow][tileCol] = TileType.STONE;
+      items[tileRow][tileCol] = ItemType.STONE;
       inventoryCount -= 2;
       refreshScreen();
-      break;
+      return;
   }
 }
 
@@ -183,25 +199,35 @@ function playerAction() {
       tileCol += 1;
       break;
   }
-  switch (tiles[tileRow][tileCol]) {
-    case TileType.STONE:
-      tiles[tileRow][tileCol] = TileType.BOULDER;
+  switch (items[tileRow][tileCol]) {
+    case ItemType.NONE:
       break;
+    case ItemType.STONE:
+      items[tileRow][tileCol] = ItemType.BOULDER;
+      refreshScreen();
+      return;
+    case ItemType.BOULDER:
+      items[tileRow][tileCol] = ItemType.ROCK;
+      refreshScreen();
+      return;
+    case ItemType.ROCK:
+      items[tileRow][tileCol] = ItemType.NONE;
+      inventoryCount += 1;
+      refreshScreen();
+      return;
+    default:
+      return;
+  }
+  switch (tiles[tileRow][tileCol]) {
     case TileType.WATER:
       tiles[tileRow][tileCol] = TileType.SAND;
-      break;
-    case TileType.BOULDER:
-      tiles[tileRow][tileCol] = TileType.ROCK;
-      break;
-    case TileType.ROCK:
-      tiles[tileRow][tileCol] = TileType.GRASS;
-      inventoryCount += 1;
       break;
     case TileType.GRASS:
     case TileType.SAND:
       tiles[tileRow][tileCol] = TileType.DIRT;
       break;
     case TileType.DIRT:
+    default:
       break;
   }
   refreshScreen();
@@ -209,7 +235,19 @@ function playerAction() {
 
 function updatePlayer(newRow, newCol) {
   // Update player position and information
+  switch (items[newRow][newCol]) {
+    // Not passable
+    case ItemType.BOULDER:
+    case ItemType.ROCK:
+    case ItemType.STONE:
+      return;
+    default:
+      break;
+  }
   switch (tiles[newRow][newCol]) {
+    // Not passable
+    case TileType.WATER:
+      break;
     // Passable, player moves, steps increases
     case TileType.GRASS:
     case TileType.DIRT:
@@ -218,14 +256,7 @@ function updatePlayer(newRow, newCol) {
       playerCol = newCol;
       playerSteps++;
       break;
-    // Not passable
-    case TileType.WATER:
-    case TileType.BOULDER:
-    case TileType.ROCK:
-    case TileType.STONE:
     default:
-      break;
-      
       break;
   }
 
@@ -450,9 +481,9 @@ function generateRandomTiles(seed) {
       } else if (rand < 60) {
         tiles[i][j] = TileType.SAND;
       } else if (rand < 70) {
-        tiles[i][j] = TileType.BOULDER;
+        items[i][j] = ItemType.BOULDER;
       } else if (rand < 80) {
-        tiles[i][j] = TileType.ROCK;
+        items[i][j] = ItemType.ROCK;
       }
     }
   }
@@ -496,6 +527,7 @@ function refreshScreen() {
 async function saveGame() {
   let saveGameString = "{";
   saveGameString += "\"tiles\":" + JSON.stringify(tiles);
+  saveGameString += ",\"items\":" + JSON.stringify(items);
   saveGameString += ",\"rocks\":" + inventoryCount;
   saveGameString += ",\"steps\":" + playerSteps;
   saveGameString += ",\"row\":" + playerRow;
@@ -540,6 +572,7 @@ async function loadGame() {
     let loadGameObject = JSON.parse(loadGameString);
     chatMessagesDiv.innerHTML += "<p><strong>SAVE</strong>: " + JSON.stringify(loadGameObject) + "</p>";
     tiles = loadGameObject.tiles;
+    items = loadGameObject.items;
     inventoryCount = loadGameObject.rocks;
     playerSteps = loadGameObject.steps;
     playerDirection = loadGameObject.dir;
@@ -630,9 +663,9 @@ async function initGame() {
         } else if (Math.random() < 0.075) {
           tiles[i][j] = TileType.DIRT;
         } else if (Math.random() < 0.018) {
-          tiles[i][j] = TileType.BOULDER;
+          items[i][j] = ItemType.BOULDER;
         } else if (Math.random() < 0.018) {
-          tiles[i][j] = TileType.ROCK;
+          items[i][j] = ItemType.ROCK;
         }
       }
     }
