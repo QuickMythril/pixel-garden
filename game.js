@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.2.1 - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
+let versionString = "Q-App Game Demo - Version: 0.2.2 - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -422,7 +422,7 @@ async function sendChatMessage(message) {
     
     switch (error.error) {
       case "invalid signature":
-        chatMessagesDiv.innerHTML += "<p>4.2 QORT minimum required to prevent spam.  PoW not implemented yet.  Please use Q-Chat to post in this group.</p>";
+        chatMessagesDiv.innerHTML += "<p>4.2 QORT minimum required to prevent spam.<br/>PoW not implemented yet.<br/>Please use Q-Chat to post in this group.</p>";
         break;
       case "transaction invalid: invalid transaction group ID (INVALID_TX_GROUP_ID)":
         joinGameChat();
@@ -525,6 +525,7 @@ function refreshScreen() {
 
 // Publish the game save to QDN as a JSON string
 async function saveGame() {
+  chatMessagesDiv.innerHTML += "<p><strong>Saving game...</strong></p>";
   let saveGameString = "{";
   saveGameString += "\"tiles\":" + JSON.stringify(tiles);
   saveGameString += ",\"items\":" + JSON.stringify(items);
@@ -544,15 +545,22 @@ async function saveGame() {
       data64: saveGame64,
       filename: "pixelgarden-savefile-v1.json"
     });
+    chatMessagesDiv.innerHTML += "<p><strong>Game saved!</strong></p>";
   } catch (error) {
-    console.log(error);
-    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
-    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+    if (error.error == "User declined request") {
+      chatMessagesDiv.innerHTML += "<p><strong>Save declined.</strong></p>";
+    } else if (error.error == "Missing fields: name") {
+      chatMessagesDiv.innerHTML += "<p><strong>Saving to QDN is unavailable.<br/>Name access required.</strong></p>";
+    } else {
+      chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
+      chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+    }
   }
 }
 
 // Load a game from a JSON string on QDN
 async function loadGame() {
+  chatMessagesDiv.innerHTML += "<p><strong>Loading game...</strong></p>";
   let loadGameString = "";
   try {
     let loadGame64 = await qortalRequest({
@@ -573,10 +581,16 @@ async function loadGame() {
     playerRow = loadGameObject.row;
     playerCol = loadGameObject.col;
     refreshScreen();
+    chatMessagesDiv.innerHTML += "<p><strong>Game loaded!</strong></p>";
   } catch (error) {
-    console.log(error);
-    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
-    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+    if (error.error == 1401) {
+      chatMessagesDiv.innerHTML += "<p><strong>Unable to load.<br/>No save file found.</strong></p>";
+    } else if (error.stack) {
+      chatMessagesDiv.innerHTML += "<p><strong>Loading from QDN is unavailable.<br/>Name access required.</strong></p>";
+    } else {
+      chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
+      chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+    }
   }
 }
 
