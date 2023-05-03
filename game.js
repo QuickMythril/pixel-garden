@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.2.3 - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
+let versionString = "Q-App Game Demo - Version: 0.2.4 - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -401,6 +401,21 @@ async function updateChatMessages() {
       const messageText = messageJSON.messageText.content[0].content[0].text;
 
       chatMessagesDiv.innerHTML += "<p><strong>" + element.senderName + "</strong>: " + messageText + "</p>";
+
+      // Check for chat images
+      if (messageJSON.images) {
+        let chatImageBase64 = await qortalRequest({
+          action: "FETCH_QDN_RESOURCE",
+          name: messageJSON.images[0].name,
+          service: messageJSON.images[0].service,
+          identifier: messageJSON.images[0].identifier,
+          encoding: "base64"
+        });
+  
+        let chatImage = new Image();
+        chatImage.src = "data:image/png;base64," + chatImageBase64;
+        chatMessagesDiv.innerHTML += "<p><img src=\"" + chatImage.src + "\"></p>";
+      }
     }
 
     chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
@@ -556,6 +571,8 @@ async function saveGame() {
       chatMessagesDiv.innerHTML += "<p><strong>Saving to QDN is unavailable.<br/>Name access required.</strong></p>";
     } else if (error.error == "Interactive features were requested, but these are not yet supported when viewing via a gateway. To use interactive features, please access using the Qortal UI desktop app. More info at: https://qortal.org") {
       chatMessagesDiv.innerHTML += "<p><strong>Saving to QDN is unavailable via gateway.</strong></p>";
+    } else if (error == "ReferenceError: qortalRequest is not defined") {
+      chatMessagesDiv.innerHTML += "<p><strong>Q-Apps are not fully functional without Qortal.</strong></p>";
     } else {
       chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
       chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
