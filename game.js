@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.2.2 - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
+let versionString = "Q-App Game Demo - Version: 0.2.3 - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -265,6 +265,9 @@ function updatePlayer(newRow, newCol) {
 
 // Update the game state when a key is pressed
 function handleKeyPress(event) {
+  if (event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight") {
+    event.preventDefault();
+  }
   let newRow = playerRow;
   let newCol = playerCol;
 
@@ -551,6 +554,8 @@ async function saveGame() {
       chatMessagesDiv.innerHTML += "<p><strong>Save declined.</strong></p>";
     } else if (error.error == "Missing fields: name") {
       chatMessagesDiv.innerHTML += "<p><strong>Saving to QDN is unavailable.<br/>Name access required.</strong></p>";
+    } else if (error.error == "Interactive features were requested, but these are not yet supported when viewing via a gateway. To use interactive features, please access using the Qortal UI desktop app. More info at: https://qortal.org") {
+      chatMessagesDiv.innerHTML += "<p><strong>Saving to QDN is unavailable via gateway.</strong></p>";
     } else {
       chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
       chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
