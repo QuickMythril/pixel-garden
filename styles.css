@@ -16,14 +16,14 @@ body {
 
 /* Chat Section */
 #chatContainer {
-  width: 300px;
-  margin-left: 20px;
+  width: 400px;
+  margin-left: 10px;
   display: flex;
   flex-direction: column;
 }
 
 #chatMessages {
-  height: 400px;
+  height: 350px;
   overflow-y: auto;
   border: 1px solid black;
   padding: 5px;
@@ -32,7 +32,7 @@ body {
 
 #chatInput {
   margin-top: 5px;
-  width: 90%;
+  width: 93%;
   border-radius: 4px;
   padding: 6px 12px;
   border: 1px solid #008fd5;
