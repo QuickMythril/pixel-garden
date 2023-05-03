@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.1.3a - 2023/04/29<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
+let versionString = "Q-App Game Demo - Version: 0.2.0b - 2023/05/02<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -56,6 +56,7 @@ let inventoryCount = 0;
 let playerSteps = 0;
 let playerDirection = "down";
 let blockchainHeight = 0;
+let playerName = "";
 
 // Draw the tiles
 function drawTiles() {
@@ -491,6 +492,67 @@ function refreshScreen() {
   playerInfoDiv.innerHTML = "Rocks Held: " + inventoryCount + "<br/>Steps Taken: " + playerSteps;
 }
 
+// Publish the game save to QDN as a JSON string
+async function saveGame() {
+  let saveGameString = "{";
+  saveGameString += "\"tiles\":" + JSON.stringify(tiles);
+  saveGameString += ",\"rocks\":" + inventoryCount;
+  saveGameString += ",\"steps\":" + playerSteps;
+  saveGameString += ",\"row\":" + playerRow;
+  saveGameString += ",\"col\":" + playerCol;
+  saveGameString += ",\"dir\":\"" + playerDirection;
+  saveGameString += "\"}";
+  let saveGameObject = JSON.parse(saveGameString);
+  chatMessagesDiv.innerHTML += "<p><strong>SAVE</strong>: " + JSON.stringify(saveGameObject) + "</p>";
+  let saveGame64 = btoa(saveGameString);
+  chatMessagesDiv.innerHTML += "<p><strong>SAVE</strong>: " + saveGame64 + "</p>";
+  try {
+    await qortalRequest({
+      action: "PUBLISH_QDN_RESOURCE",
+      name: playerName,
+      service: "JSON",
+      identifier: "pixelgarden-savefile",
+      data64: saveGame64,
+      filename: "pixelgarden-savefile-v1.json"
+    });
+  } catch (error) {
+    console.log(error);
+    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
+    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+  }
+}
+
+// Load a game from a JSON string on QDN
+async function loadGame() {
+  let loadGameString = "";
+  try {
+    let loadGame64 = await qortalRequest({
+      action: "FETCH_QDN_RESOURCE",
+      name: playerName,
+      service: "JSON",
+      identifier: "pixelgarden-savefile",
+      encoding: "base64",
+      rebuild: false
+    });
+    chatMessagesDiv.innerHTML += "<p><strong>SAVE</strong>: " + loadGame64 + "</p>";
+    loadGameString = atob(loadGame64);
+    chatMessagesDiv.innerHTML += "<p><strong>SAVE</strong>: " + loadGameString + "</p>";
+    let loadGameObject = JSON.parse(loadGameString);
+    chatMessagesDiv.innerHTML += "<p><strong>SAVE</strong>: " + JSON.stringify(loadGameObject) + "</p>";
+    tiles = loadGameObject.tiles;
+    inventoryCount = loadGameObject.rocks;
+    playerSteps = loadGameObject.steps;
+    playerDirection = loadGameObject.dir;
+    playerRow = loadGameObject.row;
+    playerCol = loadGameObject.col;
+    refreshScreen();
+  } catch (error) {
+    console.log(error);
+    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + error + "</p>";
+    chatMessagesDiv.innerHTML += "<p><strong>Error</strong>: " + JSON.stringify(error) + "</p>";
+  }
+}
+
 // Initialize the game
 async function initGame() {
   gameInfoDiv.innerHTML = versionString;
@@ -501,6 +563,8 @@ async function initGame() {
   document.getElementById("rightButton").addEventListener("click", () => handleButtonClick("right"));
   document.getElementById("actionButton").addEventListener("click", () => playerAction());
   document.getElementById("itemButton").addEventListener("click", () => playerItem());
+  document.getElementById("saveButton").addEventListener("click", () => saveGame());
+  document.getElementById("loadButton").addEventListener("click", () => loadGame());
 
   try {
     // Get the address of the logged-in user
@@ -538,11 +602,12 @@ async function initGame() {
     });
 
     if (names.length > 0) {
-      accountInfoDiv.innerHTML = "Playing as: " + names[0].name + "<br/>Game Seed: " + seed;
+      playerName = names[0].name;
+      accountInfoDiv.innerHTML = "Playing as: " + playerName + "<br/>Game Seed: " + seed;
 
       let avatarBase64 = await qortalRequest({
         action: "FETCH_QDN_RESOURCE",
-        name: names[0].name,
+        name: playerName,
         service: "THUMBNAIL",
         identifier: "qortal_avatar",
         encoding: "base64"
