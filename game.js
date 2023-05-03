@@ -403,7 +403,7 @@ async function updateChatMessages() {
       chatMessagesDiv.innerHTML += "<p><strong>" + element.senderName + "</strong>: " + messageText + "</p>";
 
       // Check for chat images
-      if (messageJSON.images) {
+      if (messageJSON.images[0].service) {
         let chatImageBase64 = await qortalRequest({
           action: "FETCH_QDN_RESOURCE",
           name: messageJSON.images[0].name,
