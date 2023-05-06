@@ -1,4 +1,4 @@
-let versionString = "Q-App Game Demo - Version: 0.2.4a - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
+let versionString = "Q-App Game Demo - Version: 0.2.4d - 2023/05/03<br/>KB Controls: WASD / Arrow Keys / NumPad - Mouse/Touch: On-Screen Buttons<br/>O: Item - X: Action";
 
 let canvas = document.getElementById("gameCanvas");
 let gameInfoDiv = document.getElementById("gameInfo");
@@ -427,13 +427,26 @@ async function updateChatMessages() {
   }
 }
 
+function shareScreenshot() {
+  try {
+    let screenshot = new Image();
+    screenshot.src = canvas.toDataURL();
+    chatMessagesDiv.innerHTML += "<p>test: <img src=\"" + screenshot.src + "\"></p>";
+  } catch (error) {
+    chatMessagesDiv.innerHTML += "<p>error:" + error + "</p>";
+  }
+}
+
 // Add a function to send a chat message
 async function sendChatMessage(message) {
   try {
     await qortalRequest({
       action: "SEND_CHAT_MESSAGE",
       groupId: 4,
-      message: message
+      message: message,
+      service: "JSON",
+      name: playerName,
+      identifier: "pixelgarden-savefile"
     });
     updateChatMessages();
   } catch (error) {
@@ -490,19 +503,9 @@ function generateRandomTiles(seed) {
   for (let i = 0; i < ROWS; i++) {
     for (let j = 0; j < COLS; j++) {
       // Generate a random number based on the seed value
-      let rand = Math.abs(Math.sin(seed * 10000 + i * 100 + j)) * 100;
-
-      if (rand < 20) {
-        tiles[i][j] = TileType.WATER;
-      } else if (rand < 50) {
-        tiles[i][j] = TileType.DIRT;
-      } else if (rand < 60) {
-        tiles[i][j] = TileType.SAND;
-      } else if (rand < 70) {
-        items[i][j] = ItemType.BOULDER;
-      } else if (rand < 80) {
-        items[i][j] = ItemType.ROCK;
-      }
+      let rand = seed * i * j * 7;
+      tiles[i][j] = rand % 4;
+      items[i][j] = rand % 3;
     }
   }
 }
@@ -634,6 +637,7 @@ async function initGame() {
   document.getElementById("itemButton").addEventListener("click", () => playerItem());
   document.getElementById("saveButton").addEventListener("click", () => saveGame());
   document.getElementById("loadButton").addEventListener("click", () => loadGame());
+  document.getElementById("screenButton").addEventListener("click", () => shareScreenshot());
 
   try {
     // Get the address of the logged-in user
@@ -692,17 +696,9 @@ async function initGame() {
     // Set up the tile types randomly
     for (let i = 0; i < ROWS; i++) {
       for (let j = 0; j < COLS; j++) {
-        if (Math.random() < 0.018) {
-          tiles[i][j] = TileType.WATER;
-        } else if (Math.random() < 0.018) {
-          tiles[i][j] = TileType.SAND;
-        } else if (Math.random() < 0.075) {
-          tiles[i][j] = TileType.DIRT;
-        } else if (Math.random() < 0.018) {
-          items[i][j] = ItemType.BOULDER;
-        } else if (Math.random() < 0.018) {
-          items[i][j] = ItemType.ROCK;
-        }
+        let rand = 1879315249 * (i+1) * (j+1) * 7;
+        tiles[i][j] = rand % 4;
+        items[i][j] = rand % 3;
       }
     }
   }
